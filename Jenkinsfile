@@ -473,7 +473,7 @@ pipeline {
                                      env.BUILD_TAG = "${metadataVars.promoteTag}"
                                  }
                        }
-             } 
+             }
             else if ("${list[i]}" == "'Deploy'") {
                 stage('Deploy') {
 
