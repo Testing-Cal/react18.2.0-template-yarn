@@ -7,6 +7,37 @@ import Dashboard from "./dashboard";
 import Listing from "./listing";
 import PageNotFound from './page-not-found'
 
+const App = () => {
+  const basePath = process.env.REACT_APP_CONTEXT;
+  return (
+    <Router basename={basePath}>
+      <div>
+          <nav style={{margin: '20px'}}>
+              <Link to="/" style={{marginRight: '20px'}}>Home</Link>
+              <Link to="/dashboard" style={{marginRight: '20px'}}>Dashboard</Link>
+              <Link to="/listing">Listing</Link>
+          </nav>
+          <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/listing" element={<Listing />} />
+              <Route path="*" element={<PageNotFound />} />
+          </Routes>
+      </div>
+    </Router>
+   )
+}
+
+const rootElement = document.getElementById('root');
+if (rootElement) {
+  const root = createRoot(rootElement);
+  root.render(<App />);
+} else {
+  console.error("Root element not found.");
+}
+
+/*
+
 type AppState = {
     name: string
 }
@@ -52,3 +83,4 @@ if (rootElement) {
 } else {
   console.error("Root element not found.");
 }
+*/
