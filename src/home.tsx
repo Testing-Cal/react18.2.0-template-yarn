@@ -4,6 +4,10 @@ import HighchartsReact from 'highcharts-react-official';
 import highcharts3d from 'highcharts/highcharts-3d';
 highcharts3d(Highcharts);
 
+type HomeProp = {
+    name: string
+}
+
 const style = {fontWeight:'800', size: '48px'}
 const data = [{
   name:'Engagement Index',
