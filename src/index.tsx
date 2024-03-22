@@ -5,7 +5,6 @@ import Home from './home';
 import './style.css';
 import Dashboard  from "./dashboard";
 import Listing from "./listing";
-import Nested from "./nested";
 import PageNotFound from './page-not-found'
 
 
@@ -17,26 +16,21 @@ const App = () => {
           <nav style={{margin: '20px'}}>
               <Link to="/" style={{marginRight: '20px'}}>Home</Link>
               <Link to="/dashboard" style={{marginRight: '20px'}}>Dashboard</Link>
-              <Link to="/listing" style={{marginRight: '20px'}}>Listing</Link>
-              <Link to="/dashboard/listing">About</Link>
-
+              <Link to="/dashboard/listing">Listing</Link>
           </nav>
 
           <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/dashboard/*" element={<Dashboard />} >
-                    <Route index element={<Home />} />
-                    <Route path='nested' element={<Nested />} /> {/*A nested route!*/}
-                    <Route path='listing' element={<Listing />} /> {/*A nested route!*/}
+              <Route path="/dashboard/*">
+                    <Route index element={<Dashboard />} />
+                    <Route path='listing' element={<Listing />} />
               </Route>
-              <Route path="/listing" element={<Listing />} />
+              <Route path="/" element={<Home />} />
               <Route path="*" element={<PageNotFound />} />
           </Routes>
       </div>
     </Router>
    )
 }
-
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
@@ -45,7 +39,8 @@ if (rootElement) {
 } else {
   console.error("Root element not found.");
 }
-//render(<App />, document.getElementById('root'));
+
+
 /*
 class based component
 
