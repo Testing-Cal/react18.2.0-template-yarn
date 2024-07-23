@@ -1,5 +1,5 @@
 # stage1 as builder
-FROM node:18.14.2 as builder
+FROM node:20.11.1 as builder
 ARG CONTEXT='/'
 # copy the package.json to install dependencies
 COPY package.json ./
@@ -20,7 +20,7 @@ RUN npm run build
 
 RUN cat package.json
 
-FROM node:18.14.2
+FROM node:20.11.1
 ARG CONTEXT='/'
 
 #!/bin/sh
