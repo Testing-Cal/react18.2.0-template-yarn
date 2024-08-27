@@ -333,33 +333,34 @@ pipeline {
                }
                else if ("${list[i]}" == "'SonarQubeScan'" && env.ACTION == 'DEPLOY' && stage_flag['sonarScan']) {
                  stage('SonarQube Scan') {
-                     def sonar_org = "${metadataVars.sonarOrg}";
-                     def sonar_project_key = "${metadataVars.sonarProjectKey}";
+                      env.sonar_org = "${metadataVars.sonarOrg}"
+                      env.sonar_project_key = "${metadataVars.sonarProjectKey}"
+                      env.sonar_host = "${metadataVars.sonarHost}"
 
-                     if (env.SONAR_CREDENTIAL_ID != null && env.SONAR_CREDENTIAL_ID != '') {
-                       withCredentials([usernamePassword(credentialsId: "$SONAR_CREDENTIAL_ID", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                            sh """
-                              sed -i s+#SONAR_URL#+"${metadataVars.sonarHost}"+g ./sonar-project.properties
-                              sed -i s+#SONAR_LOGIN#+$PASSWORD+g ./sonar-project.properties
-                              sed -i s+#RELEASE_NAME#+"${sonar_project_key}"+g ./sonar-project.properties
-                              sed -i s+#SONAR_ORGANIZATION#+"${metadataVars.sonarOrg}"+g ./sonar-project.properties
-                              docker run --rm --user root -v "$WORKSPACE":/opt/repo -w /opt/repo $NODE_IMAGE /bin/bash -c "chown -R root:root /opt/repo && yarn add sonarqube-scanner -f && yarn run sonar"
-                              sudo chown -R `id -u`:`id -g` "$WORKSPACE"
-                            """
-                          }        
-                    }
-                     else{
-                             withSonarQubeEnv('pg-sonar') {
-                             sh """
-                             sed -i s+#SONAR_URL#+$SONAR_HOST_URL+g ./sonar-project.properties
-                             sed -i s+#SONAR_LOGIN#+$SONAR_AUTH_TOKEN+g ./sonar-project.properties
-                            sed -i s+#RELEASE_NAME#+"${sonar_project_key}"+g ./sonar-project.properties
-                            sed -i s+#SONAR_ORGANIZATION#+"${metadataVars.sonarOrg}"+g ./sonar-project.properties
-                            docker run --rm --user root -v "$WORKSPACE":/opt/repo -w /opt/repo $NODE_IMAGE /bin/bash -c "chown -R root:root /opt/repo && yarn add sonarqube-scanner -f && yarn run sonar"
-                            sudo chown -R `id -u`:`id -g` "$WORKSPACE"
-                            """
+                      if (env.SONAR_CREDENTIAL_ID != null && env.SONAR_CREDENTIAL_ID != '') {
+                          withCredentials([usernamePassword(credentialsId: "$SONAR_CREDENTIAL_ID", usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                              sh '''
+                                sed -i s+#SONAR_URL#+"$sonar_host"+g ./sonar-project.properties
+                                sed -i s+#SONAR_LOGIN#+$PASSWORD+g ./sonar-project.properties
+                                sed -i s+#RELEASE_NAME#+"$sonar_project_key"+g ./sonar-project.properties
+                                sed -i s+#SONAR_ORGANIZATION#+"$sonar_org"+g ./sonar-project.properties
+                                docker run --rm --user root -v "$WORKSPACE":/opt/repo -w /opt/repo $NODE_IMAGE /bin/bash -c "chown -R root:root /opt/repo && yarn add sonarqube-scanner -f && yarn run sonar"
+                                sudo chown -R `id -u`:`id -g` "$WORKSPACE"
+                              '''
                           }
-                    }
+                      }
+                      else{
+                          withSonarQubeEnv('pg-sonar') {
+                              sh '''
+                                 sed -i s+#SONAR_URL#+$SONAR_HOST_URL+g ./sonar-project.properties
+                                 sed -i s+#SONAR_LOGIN#+$SONAR_AUTH_TOKEN+g ./sonar-project.properties
+                                 sed -i s+#RELEASE_NAME#+"$sonar_project_key"+g ./sonar-project.properties
+                                 sed -i s+#SONAR_ORGANIZATION#+"$sonar_org"+g ./sonar-project.properties
+                                 docker run --rm --user root -v "$WORKSPACE":/opt/repo -w /opt/repo $NODE_IMAGE /bin/bash -c "chown -R root:root /opt/repo && yarn add sonarqube-scanner -f && yarn run sonar"
+                                 sudo chown -R `id -u`:`id -g` "$WORKSPACE"
+                              '''
+                          }
+                      }
                   }
                 }
                 else if ("${list[i]}" == "'ContainerImageScan'" && stage_flag['containerScan']) {
